@@ -1,17 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Verifying connection to local network before redirecting"
-    />
-    <title>BenAnna Network Checker</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript pls</noscript>
-    TODO
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta
+            name="description"
+            content="Verifying connection to local network before redirecting"
+        />
+        <title>BenAnna Network Checker</title>
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                width: 100vw;
+                background: linear-gradient(to bottom, #303030, #151515);
+            }
+
+            .content {
+                  text-align: center;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  align-items: center;
+            }
+
+            .message {
+                font-size: 2.2em;
+                color: #9d9d9d;
+            }
+
+            .error {
+                color: #ff0000;
+                font-weight: bold;
+                font-size: 64px;
+            }
+
+            .spinner {
+                border: 8px solid rgba(0, 0, 0, 0.3);
+                border-top: 8px solid #3498db;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const errorContent = "<p class=\"error\">You need to connect to the wifi</p>";  
+
+                fetch("http://192.168.0.100:45923")
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = "http://192.168.0.100:6680"; // TODO - actual URL
+                        } else {
+                            document.body.innerHTML = errorContent;
+                        }
+                    })
+                    .catch(error => {
+                        document.body.innerHTML = errorContent;
+                    });
+                }
+            );
+        </script>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript pls</noscript>  
+        <div class="content">
+            <p class="message">Verifying your network connection</p>
+            <div class="spinner"></div>
+        </div>
+    </body>
 </html>
