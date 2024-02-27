@@ -39,7 +39,7 @@
             .error {
                 color: #ff0000;
                 font-weight: bold;
-                font-size: 64px;
+                font-size: 42px;
             }
 
             .spinner {
@@ -59,12 +59,21 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                const errorContent = "<p class=\"error\">You need to connect to the wifi</p>";  
+                const errorContent = "<p class=\"error\">You need to connect to the wifi</p>";
 
-                fetch("http://192.168.0.100:45923")
+                function fetchWithTimeout(url, timeout) {
+                    return Promise.race([
+                        fetch(url),
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('Timeout')), timeout)
+                        ),
+                    ]);
+                }
+
+                fetchWithTimeout("http://192.168.0.100:45923", 2500)
                     .then(response => {
                         if (response.ok) {
-                            window.location.href = "http://192.168.0.100:6680"; // TODO - actual URL
+                            window.location.href = "http://192.168.0.100:6680/bigscreen?page=search";
                         } else {
                             document.body.innerHTML = errorContent;
                         }
@@ -77,7 +86,7 @@
         </script>
     </head>
     <body>
-        <noscript>You need to enable JavaScript pls</noscript>  
+        <noscript>You need to enable JavaScript pls</noscript>
         <div class="content">
             <p class="message">Verifying your network connection</p>
             <div class="spinner"></div>
