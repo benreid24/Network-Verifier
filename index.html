@@ -57,22 +57,31 @@
             }
         </style>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
+	<script>
+	    document.addEventListener("DOMContentLoaded", function () {
                 const errorContent = "<p class=\"error\">You need to connect to the wifi</p>";
 
-                function fetchWithTimeout(url, timeout) {
-                    return Promise.race([
-                        fetch(url),
-                        new Promise((_, reject) =>
-                            setTimeout(() => reject(new Error('Timeout')), timeout)
-                        ),
-                    ]);
+                async function getMyIP() {
+                    const response = await fetch('https://httpbin.org/ip');
+                    const body = await response.json();
+                    return body.origin;
                 }
 
-                fetchWithTimeout("http://192.168.0.100:45923", 2500)
-                    .then(response => {
-                        if (response.ok) {
+                async function getHomeIP() {
+                    const response = await fetch('https://dns.google/resolve?name=sirgeorgelordofthevoid.com');
+                    const body = await response.json();
+                    return body.Answer[0].data;
+                }
+
+                async function validateNetwork() {
+                    const myIpPromise = getMyIP();
+                    const homeIpPromise = getHomeIP();
+                    return (await myIpPromise) === (await homeIpPromise);
+                }
+
+                validateNetwork()
+                    .then(result => {
+                        if (result) {
                             window.location.href = "http://192.168.0.100:6680/bigscreen?page=search";
                         } else {
                             document.body.innerHTML = errorContent;
@@ -93,3 +102,4 @@
         </div>
     </body>
 </html>
+
